@@ -63,15 +63,78 @@ export const PROJECTS: Project[] = [
     description: "Orquestador de pagos multicurrencia con validación de seguridad PCI-DSS y sistema de reintentos automático para transacciones fallidas.",
     tags: ["Node.js", "TypeScript", "Express", "AWS Lambda"],
     type: "Fintech / Payments",
-    github: "https://github.com/eddy1699"
+    link: "#"
   },
   {
     title: "Cloud Infrastructure as Code",
     description: "Plantillas de Terraform para el despliegue automático de microservicios en AWS (EKS, RDS, API Gateway) con monitoreo en CloudWatch.",
     tags: ["AWS", "Terraform", "Docker", "CI/CD"],
     type: "DevOps / Infrastructure",
-    github: "https://github.com/eddy1699"
-  }
+    link: "#"
+  },
+    {
+    title: "The Last Echo",
+    description: "Landing page para un proyecto musical, desarrollada con React y Tailwind CSS, enfocada en la promoción de contenido multimedia.",
+    tags: ["React", "Tailwind"],
+    type: "Landing Page",
+    link: "https://thelastecho.netlify.app"
+  },
+     {
+    title: "Lumina Film Fest",
+    description: "Landing page para un festival de cine, creada con React y Tailwind CSS, destacando la programación y eventos del festival.",
+    tags: ["React", "Tailwind"],
+    type: "Landing Page",
+    link: "https://luminafilmfest.netlify.app/"
+  },
+      {
+    title: "Cine Flow Festival",
+    description: "Landing page para un festival de cine independiente, desarrollada con React y Tailwind CSS, con enfoque en la experiencia del usuario.",
+    tags: ["React", "Tailwind"],
+    type: "Landing Page",
+    link: "https://flowcine.netlify.app/"
+  },
+  {
+    title: "Escuela de Gobernabilidad y Ciudadania",
+    description: "Landing page institucional desarrollada con Vue.js y Tailwind CSS para una mejor experiencia de usuario y adaptabilidad móvil.",
+    tags: ["Vue", "Tailwind"],
+    type: "Landing Page",
+    link: "https://sparkly-liger-4bcd0a.netlify.app/"
+  },
+  {
+    title: "Weather App React",
+    description: "Aplicación web que consume una API pública para mostrar el clima actual y pronósticos, con diseño responsivo y funcionalidad de búsqueda por ciudad.",
+    tags: ["React", "CSS"],
+    type: "Web App",
+    link: "https://weather-app-reactv1.netlify.app/"
+  },
+   {
+    title: "Consorcio e Inversiones",
+    description: "Landing page para una empresa de inversiones, creada con Vue.js y Tailwind CSS, optimizada para SEO y experiencia móvil.",
+    tags: ["Vue", "Tailwind"],
+    type: "Landing Page",
+    link: "https://consorcioeinversiones.netlify.app/"
+  },
+     {
+    title: "The Last Echo",
+    description: "Landing page para un proyecto musical, desarrollada con React y Tailwind CSS, enfocada en la promoción de contenido multimedia.",
+    tags: ["React", "Tailwind"],
+    type: "Landing Page",
+    link: "https://thelastecho.netlify.app"
+  },
+     {
+    title: "Lumina Film Fest",
+    description: "Landing page para un festival de cine, creada con React y Tailwind CSS, destacando la programación y eventos del festival.",
+    tags: ["React", "Tailwind"],
+    type: "Landing Page",
+    link: "https://luminafilmfest.netlify.app/"
+  },
+      {
+    title: "Cine Flow Festival",
+    description: "Landing page para un festival de cine independiente, desarrollada con React y Tailwind CSS, con enfoque en la experiencia del usuario.",
+    tags: ["React", "Tailwind"],
+    type: "Landing Page",
+    link: "https://flowcine.netlify.app/"
+  },
 ];
 
 export const SKILL_CATEGORIES: SkillCategory[] = [

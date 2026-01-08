@@ -119,21 +119,69 @@ const Navbar = () => {
   );
 };
 
+// const ProjectCard: React.FC<{ project: (typeof PROJECTS)[0] }> = ({ project }) => (
+//   <div className="glass group p-8 rounded-3xl border border-white/5 hover:border-blue-500/30 transition-all transform hover:-translate-y-2">
+//     <div className="flex justify-between items-start mb-6">
+//       <div className="p-3 rounded-2xl bg-blue-500/10 text-blue-500 group-hover:bg-blue-500 group-hover:text-white transition-all duration-500">
+//         <Server size={24} />
+//       </div>
+//       <div className="flex gap-3">
+//         {project.github && (
+//           <a href={project.github} target="_blank" rel="noopener noreferrer" className="text-slate-500 hover:text-white transition-colors">
+//             <Github size={20} />
+//           </a>
+//         )}
+//         {project.link && (
+//           <a href={project.link} target="_blank" rel="noopener noreferrer" className="text-slate-500 hover:text-white transition-colors">
+//             <ExternalLink size={20} />
+//           </a>
+//         )}
+//       </div>
+//     </div>
+    
+//     <span className="text-[10px] font-bold uppercase tracking-widest text-blue-400 mb-2 block">{project.type}</span>
+//     <h3 className="text-2xl font-bold text-white mb-3 group-hover:text-blue-400 transition-colors">{project.title}</h3>
+//     <p className="text-slate-400 text-sm leading-relaxed mb-6">
+//       {project.description}
+//     </p>
+    
+//     <div className="flex flex-wrap gap-2">
+//       {project.tags.map(tag => (
+//         <span key={tag} className="px-3 py-1 rounded-md bg-white/5 border border-white/5 text-[10px] font-mono text-slate-300">
+//           {tag}
+//         </span>
+//       ))}
+//     </div>
+//   </div>
+// );
 const ProjectCard: React.FC<{ project: (typeof PROJECTS)[0] }> = ({ project }) => (
   <div className="glass group p-8 rounded-3xl border border-white/5 hover:border-blue-500/30 transition-all transform hover:-translate-y-2">
     <div className="flex justify-between items-start mb-6">
       <div className="p-3 rounded-2xl bg-blue-500/10 text-blue-500 group-hover:bg-blue-500 group-hover:text-white transition-all duration-500">
         <Server size={24} />
       </div>
-      <div className="flex gap-3">
+      
+      {/* Contenedor de enlaces */}
+      <div className="flex items-center gap-4">
         {project.github && (
           <a href={project.github} target="_blank" rel="noopener noreferrer" className="text-slate-500 hover:text-white transition-colors">
             <Github size={20} />
           </a>
         )}
-        {project.link && (
-          <a href={project.link} target="_blank" rel="noopener noreferrer" className="text-slate-500 hover:text-white transition-colors">
-            <ExternalLink size={20} />
+        
+        {project.link && project.link !== '#' && (
+          <a 
+            href={project.link} 
+            target="_blank" 
+            rel="noopener noreferrer" 
+            // CAMBIOS AQUÍ:
+            // 1. 'flex items-center gap-2': Alinea el texto y el ícono
+            // 2. 'group/link': (Opcional) Para animaciones específicas si quisieras
+            className="flex items-center gap-2 text-slate-500 hover:text-blue-400 transition-colors"
+          >
+            {/* Texto añadido con estilo pequeño y negrita */}
+            <span className="text-xs font-bold uppercase tracking-wide">Ver proyecto</span>
+            <ExternalLink size={18} />
           </a>
         )}
       </div>
@@ -154,7 +202,6 @@ const ProjectCard: React.FC<{ project: (typeof PROJECTS)[0] }> = ({ project }) =
     </div>
   </div>
 );
-
 const Hero = () => {
   return (
     <section id="home" className="relative pt-32 pb-20 md:pt-48 md:pb-32 px-6 overflow-hidden scroll-mt-20">
