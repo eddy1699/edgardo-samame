@@ -1,117 +1,152 @@
 
 import React, { useState, useEffect } from 'react';
-import { 
-  Github, 
-  Linkedin, 
-  Mail, 
-  ExternalLink, 
-  MapPin, 
+import {
+  Github,
+  Linkedin,
+  Mail,
+  ExternalLink,
+  MapPin,
   Phone,
-  ChevronRight,
   Menu,
   X,
   Code2,
   Cloud,
   Database,
   Zap,
-  Briefcase,
-  Terminal,
-  Server
+  ArrowUp,
 } from 'lucide-react';
 import { EXPERIENCES, SKILL_CATEGORIES, EDUCATIONS, PROJECTS } from './constants';
+import profilePhoto from './edgardo-samame.jpg';
+
+// ─── Hooks ────────────────────────────────────────────────────────────────────
+
+const useActiveSection = (ids: string[]) => {
+  const [active, setActive] = useState('');
+  useEffect(() => {
+    const onScroll = () => {
+      const y = window.scrollY + 120;
+      for (let i = ids.length - 1; i >= 0; i--) {
+        const el = document.getElementById(ids[i]);
+        if (el && el.offsetTop <= y) { setActive(ids[i]); return; }
+      }
+      setActive('');
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+    return () => window.removeEventListener('scroll', onScroll);
+  }, [ids]);
+  return active;
+};
+
+const useScrollReveal = () => {
+  useEffect(() => {
+    const obs = new IntersectionObserver(
+      (entries) => entries.forEach((e) => {
+        if (e.isIntersecting) { e.target.classList.add('animate-visible'); obs.unobserve(e.target); }
+      }),
+      { threshold: 0.1 }
+    );
+    document.querySelectorAll('.animate-on-scroll').forEach((el) => obs.observe(el));
+    return () => obs.disconnect();
+  }, []);
+};
+
+// ─── Shared styles ────────────────────────────────────────────────────────────
+
+const card = 'border border-white/10 bg-white/[0.02] rounded-xl';
+const cardHover = `${card} hover:border-white/20 hover:bg-white/[0.04] transition-colors`;
+
+// ─── SectionHeader ────────────────────────────────────────────────────────────
+
+const SectionHeader: React.FC<{
+  title: string;
+  subtitle?: string;
+  align?: 'left' | 'center';
+}> = ({ title, subtitle, align = 'left' }) => (
+  <div className={`mb-12 ${align === 'center' ? 'text-center' : ''}`}>
+    <h2 className="text-2xl font-bold text-white mb-3">{title}</h2>
+    <div className={`w-6 h-px bg-blue-500 ${align === 'center' ? 'mx-auto' : ''}`} />
+    {subtitle && (
+      <p className={`mt-4 text-slate-500 text-sm max-w-lg ${align === 'center' ? 'mx-auto' : ''}`}>
+        {subtitle}
+      </p>
+    )}
+  </div>
+);
+
+// ─── Navbar ───────────────────────────────────────────────────────────────────
 
 const Navbar = () => {
-  const [isScrolled, setIsScrolled] = useState(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const [open, setOpen] = useState(false);
+  const active = useActiveSection(['home', 'experience', 'projects', 'skills', 'education']);
 
   useEffect(() => {
-    const handleScroll = () => setIsScrolled(window.scrollY > 20);
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    const fn = () => setScrolled(window.scrollY > 20);
+    window.addEventListener('scroll', fn, { passive: true });
+    return () => window.removeEventListener('scroll', fn);
   }, []);
 
-  const navLinks = [
-    { name: 'Inicio', href: '#home' },
-    { name: 'Experiencia', href: '#experience' },
-    { name: 'Proyectos', href: '#projects' },
-    { name: 'Habilidades', href: '#skills' },
-    { name: 'Educación', href: '#education' },
+  const links = [
+    { label: 'Inicio',      href: '#home' },
+    { label: 'Experiencia', href: '#experience' },
+    { label: 'Proyectos',   href: '#projects' },
+    { label: 'Habilidades', href: '#skills' },
+    { label: 'Educación',   href: '#education' },
   ];
 
-  const scrollToSection = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
-    if (href.startsWith('#')) {
-      e.preventDefault();
-      const targetId = href.replace('#', '');
-      const element = document.getElementById(targetId);
-      if (element) {
-        const offset = 80;
-        const elementPosition = element.getBoundingClientRect().top;
-        const offsetPosition = elementPosition + window.pageYOffset - offset;
-
-        window.scrollTo({
-          top: offsetPosition,
-          behavior: 'smooth'
-        });
-        setIsMobileMenuOpen(false);
-      }
+  const scrollTo = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    e.preventDefault();
+    const id = href.replace('#', '');
+    const el = document.getElementById(id);
+    if (el) {
+      window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - 80, behavior: 'smooth' });
+      setOpen(false);
     }
   };
 
   return (
-    <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? 'bg-[#0a0a0c]/80 backdrop-blur-md py-4' : 'bg-transparent py-6'}`}>
-      <div className="max-w-7xl mx-auto px-6 flex justify-between items-center">
-        <a 
-          href="#home" 
-          onClick={(e) => scrollToSection(e, '#home')}
-          className="text-xl font-bold tracking-tighter text-white z-50"
-        >
-          EDGARDO<span className="text-blue-500">SAMAMÉ</span>
+    <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? 'bg-[#0a0a0c]/90 backdrop-blur-md border-b border-white/5 py-4' : 'py-6'}`}>
+      <div className="max-w-6xl mx-auto px-6 flex justify-between items-center">
+        <a href="#home" onClick={(e) => scrollTo(e, '#home')} className="text-sm font-bold tracking-tight text-white">
+          EDGARDO <span className="text-blue-500">SAMAMÉ</span>
         </a>
 
-        {/* Desktop Menu */}
         <div className="hidden md:flex gap-8 items-center">
-          {navLinks.map((link) => (
-            <a 
-              key={link.name} 
-              href={link.href} 
-              onClick={(e) => scrollToSection(e, link.href)}
-              className="text-sm font-medium text-slate-400 hover:text-white transition-colors"
+          {links.map(({ label, href }) => (
+            <a
+              key={label}
+              href={href}
+              onClick={(e) => scrollTo(e, href)}
+              className={`text-xs font-medium transition-colors ${active === href.replace('#', '') ? 'text-white' : 'text-slate-500 hover:text-slate-300'}`}
             >
-              {link.name}
+              {label}
             </a>
           ))}
-          <a 
-            href="mailto:edgardosamame@gmail.com" 
-            className="px-5 py-2 rounded-full bg-blue-600 hover:bg-blue-500 text-white text-sm font-semibold transition-all shadow-lg shadow-blue-900/20"
-          >
-            Contáctame
+          <a href="mailto:edgardosamame@gmail.com" className="text-xs font-semibold px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-white transition-colors">
+            Contacto
           </a>
         </div>
 
-        {/* Mobile Menu Toggle */}
-        <button className="md:hidden text-white z-50 p-2" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
-          {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+        <button className="md:hidden text-slate-400 p-2" aria-label={open ? 'Cerrar menú' : 'Abrir menú'} onClick={() => setOpen(!open)}>
+          {open ? <X size={20} /> : <Menu size={20} />}
         </button>
       </div>
 
-      {/* Mobile Menu Overlay */}
-      {isMobileMenuOpen && (
-        <div className="md:hidden fixed inset-0 bg-[#0a0a0c] z-40 px-6 pt-24 pb-8 flex flex-col gap-6 animate-in slide-in-from-top duration-300">
-          {navLinks.map((link) => (
-            <a 
-              key={link.name} 
-              href={link.href} 
-              onClick={(e) => scrollToSection(e, link.href)}
-              className="text-3xl font-bold text-white border-b border-white/5 pb-4"
+      {open && (
+        <div className="md:hidden fixed inset-0 bg-[#0a0a0c] z-40 px-6 pt-24 pb-8 flex flex-col gap-4">
+          {links.map(({ label, href }) => (
+            <a
+              key={label}
+              href={href}
+              onClick={(e) => scrollTo(e, href)}
+              className={`text-2xl font-bold pb-4 border-b border-white/5 ${active === href.replace('#', '') ? 'text-blue-400' : 'text-white'}`}
             >
-              {link.name}
+              {label}
             </a>
           ))}
-          <a 
-            href="mailto:edgardosamame@gmail.com" 
-            className="w-full text-center py-4 mt-4 rounded-xl bg-blue-600 text-white font-bold text-xl shadow-xl shadow-blue-900/40"
-          >
-            Contáctame
+          <a href="mailto:edgardosamame@gmail.com" className="mt-4 py-3 text-center rounded-lg bg-blue-600 text-white font-semibold">
+            Contacto
           </a>
         </div>
       )}
@@ -119,172 +154,129 @@ const Navbar = () => {
   );
 };
 
-// const ProjectCard: React.FC<{ project: (typeof PROJECTS)[0] }> = ({ project }) => (
-//   <div className="glass group p-8 rounded-3xl border border-white/5 hover:border-blue-500/30 transition-all transform hover:-translate-y-2">
-//     <div className="flex justify-between items-start mb-6">
-//       <div className="p-3 rounded-2xl bg-blue-500/10 text-blue-500 group-hover:bg-blue-500 group-hover:text-white transition-all duration-500">
-//         <Server size={24} />
-//       </div>
-//       <div className="flex gap-3">
-//         {project.github && (
-//           <a href={project.github} target="_blank" rel="noopener noreferrer" className="text-slate-500 hover:text-white transition-colors">
-//             <Github size={20} />
-//           </a>
-//         )}
-//         {project.link && (
-//           <a href={project.link} target="_blank" rel="noopener noreferrer" className="text-slate-500 hover:text-white transition-colors">
-//             <ExternalLink size={20} />
-//           </a>
-//         )}
-//       </div>
-//     </div>
-    
-//     <span className="text-[10px] font-bold uppercase tracking-widest text-blue-400 mb-2 block">{project.type}</span>
-//     <h3 className="text-2xl font-bold text-white mb-3 group-hover:text-blue-400 transition-colors">{project.title}</h3>
-//     <p className="text-slate-400 text-sm leading-relaxed mb-6">
-//       {project.description}
-//     </p>
-    
-//     <div className="flex flex-wrap gap-2">
-//       {project.tags.map(tag => (
-//         <span key={tag} className="px-3 py-1 rounded-md bg-white/5 border border-white/5 text-[10px] font-mono text-slate-300">
-//           {tag}
-//         </span>
-//       ))}
-//     </div>
-//   </div>
-// );
-const ProjectCard: React.FC<{ project: (typeof PROJECTS)[0] }> = ({ project }) => (
-  <div className="glass group p-8 rounded-3xl border border-white/5 hover:border-blue-500/30 transition-all transform hover:-translate-y-2">
-    <div className="flex justify-between items-start mb-6">
-      <div className="p-3 rounded-2xl bg-blue-500/10 text-blue-500 group-hover:bg-blue-500 group-hover:text-white transition-all duration-500">
-        <Server size={24} />
-      </div>
-      
-      {/* Contenedor de enlaces */}
-      <div className="flex items-center gap-4">
-        {project.github && (
-          <a href={project.github} target="_blank" rel="noopener noreferrer" className="text-slate-500 hover:text-white transition-colors">
-            <Github size={20} />
-          </a>
-        )}
-        
-        {project.link && project.link !== '#' && (
-          <a 
-            href={project.link} 
-            target="_blank" 
-            rel="noopener noreferrer" 
-            // CAMBIOS AQUÍ:
-            // 1. 'flex items-center gap-2': Alinea el texto y el ícono
-            // 2. 'group/link': (Opcional) Para animaciones específicas si quisieras
-            className="flex items-center gap-2 text-slate-500 hover:text-blue-400 transition-colors"
-          >
-            {/* Texto añadido con estilo pequeño y negrita */}
-            <span className="text-xs font-bold uppercase tracking-wide">Ver proyecto</span>
-            <ExternalLink size={18} />
-          </a>
-        )}
-      </div>
-    </div>
-    
-    <span className="text-[10px] font-bold uppercase tracking-widest text-blue-400 mb-2 block">{project.type}</span>
-    <h3 className="text-2xl font-bold text-white mb-3 group-hover:text-blue-400 transition-colors">{project.title}</h3>
-    <p className="text-slate-400 text-sm leading-relaxed mb-6">
-      {project.description}
-    </p>
-    
-    <div className="flex flex-wrap gap-2">
-      {project.tags.map(tag => (
-        <span key={tag} className="px-3 py-1 rounded-md bg-white/5 border border-white/5 text-[10px] font-mono text-slate-300">
-          {tag}
-        </span>
-      ))}
-    </div>
-  </div>
-);
-const Hero = () => {
-  return (
-    <section id="home" className="relative pt-32 pb-20 md:pt-48 md:pb-32 px-6 overflow-hidden scroll-mt-20">
-      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-600/10 rounded-full blur-[120px] -z-10"></div>
-      <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-600/10 rounded-full blur-[120px] -z-10"></div>
-      
-      <div className="max-w-7xl mx-auto flex flex-col items-center text-center">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-bold uppercase tracking-widest mb-6 animate-pulse">
-          <span className="w-2 h-2 rounded-full bg-blue-500"></span>
-          Ingeniero de Software Senior
-        </div>
-        
-        <h1 className="text-5xl md:text-8xl font-extrabold tracking-tight text-white mb-6">
-          Arquitectura <span className="gradient-text">Escalable</span> & Backend Moderno
-        </h1>
-        
-        <p className="text-lg md:text-xl text-slate-400 max-w-3xl mb-10 leading-relaxed">
-          Especialista en desarrollo backend con Node.js, TypeScript y AWS. 
-          Transformo la complejidad logística y fintech en soluciones nativas en la nube de alto rendimiento.
+// ─── Hero ─────────────────────────────────────────────────────────────────────
+
+const Hero = () => (
+  <section id="home" className="relative pt-28 pb-20 md:pt-36 md:pb-28 px-6 overflow-hidden scroll-mt-20">
+    <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-blue-600/5 rounded-full blur-[140px] -z-10" />
+
+    <div className="max-w-6xl mx-auto flex flex-col-reverse md:flex-row items-center gap-16">
+      {/* Text */}
+      <div className="flex-1 flex flex-col items-center md:items-start text-center md:text-left">
+        <p className="text-slate-600 text-xs font-medium uppercase tracking-widest mb-5">
+          Ingeniero de Software Senior · Lima, Perú
         </p>
-        
-        <div className="flex flex-col sm:flex-row gap-4">
-          <a 
-            href="https://linkedin.com/in/edgardosamame" 
-            target="_blank" 
+
+        <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-white mb-6 leading-[1.1]">
+          Backend &amp;<br />
+          <span className="text-blue-500">Arquitectura</span> Escalable
+        </h1>
+
+        <p className="text-slate-400 text-base max-w-md mb-10 leading-relaxed">
+          Especialista en Node.js, TypeScript y AWS. Transformo la complejidad logística y fintech en soluciones de alto rendimiento.
+        </p>
+
+        <div className="flex flex-wrap gap-3 justify-center md:justify-start">
+          <a
+            href="https://linkedin.com/in/edgardosamame"
+            target="_blank"
             rel="noopener noreferrer"
-            className="group flex items-center justify-center gap-2 px-8 py-4 rounded-xl bg-white text-black font-bold hover:bg-slate-200 transition-all transform hover:-translate-y-1"
+            className="flex items-center gap-2 px-5 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-sm font-semibold transition-colors"
           >
-            Ver LinkedIn
-            <ExternalLink size={18} className="group-hover:translate-x-1 transition-transform" />
+            LinkedIn <ExternalLink size={14} />
           </a>
-          <a 
-            href="#projects" 
-            onClick={(e: any) => {
+          <a
+            href="#projects"
+            onClick={(e: React.MouseEvent<HTMLAnchorElement>) => {
               e.preventDefault();
               document.getElementById('projects')?.scrollIntoView({ behavior: 'smooth' });
             }}
-            className="flex items-center justify-center gap-2 px-8 py-4 rounded-xl glass border border-white/10 text-white font-bold hover:bg-white/5 transition-all"
+            className="flex items-center gap-2 px-5 py-2.5 rounded-lg border border-white/10 hover:border-white/20 text-white text-sm font-semibold transition-colors"
           >
-            Ver Portafolio
+            Ver proyectos
           </a>
         </div>
 
-        <div className="mt-20 flex flex-wrap justify-center gap-8 md:gap-16 opacity-50 grayscale hover:grayscale-0 transition-all duration-500">
-           <div className="flex items-center gap-2"><Code2 size={24}/> <span className="font-bold">TypeScript</span></div>
-           <div className="flex items-center gap-2"><Cloud size={24}/> <span className="font-bold">AWS</span></div>
-           <div className="flex items-center gap-2"><Database size={24}/> <span className="font-bold">SQL Server</span></div>
-           <div className="flex items-center gap-2"><Zap size={24}/> <span className="font-bold">Node.js</span></div>
+        <div className="mt-12 grid grid-cols-2 sm:grid-cols-4 gap-3 w-full">
+          {[
+            { value: '4+',   label: 'Años exp.' },
+            { value: '9',    label: 'Proyectos' },
+            { value: '3',    label: 'Empresas' },
+            { value: '10k+', label: 'Req/hora' },
+          ].map(({ value, label }) => (
+            <div key={label} className="border border-white/10 rounded-lg p-4 text-center">
+              <p className="text-xl font-bold text-white mb-0.5">{value}</p>
+              <p className="text-[10px] text-slate-600 uppercase tracking-wider">{label}</p>
+            </div>
+          ))}
         </div>
       </div>
-    </section>
-  );
-};
+
+      {/* Photo */}
+      <div className="flex-shrink-0">
+        <div className="relative w-48 h-48 md:w-64 md:h-64">
+          <img
+            src={profilePhoto}
+            alt="Edgardo Samamé"
+            className="w-full h-full rounded-full object-cover object-top border border-white/10"
+          />
+          <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 whitespace-nowrap flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-white/10 bg-[#0a0a0c] text-[10px] text-slate-500">
+            <span className="w-1.5 h-1.5 rounded-full bg-green-400 flex-shrink-0" />
+            E2OPEN by Wisetech
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {/* Tech strip */}
+    <div className="max-w-6xl mx-auto mt-16 flex flex-wrap justify-center md:justify-start gap-6 md:gap-10 opacity-25 hover:opacity-40 transition-opacity duration-300">
+      {[
+        { icon: <Code2 size={14} />, label: 'TypeScript' },
+        { icon: <Cloud size={14} />, label: 'AWS' },
+        { icon: <Database size={14} />, label: 'SQL Server' },
+        { icon: <Zap size={14} />, label: 'Node.js' },
+      ].map(({ icon, label }) => (
+        <div key={label} className="flex items-center gap-2 text-xs font-medium text-slate-400">
+          {icon} {label}
+        </div>
+      ))}
+    </div>
+  </section>
+);
+
+// ─── ExperienceCard ───────────────────────────────────────────────────────────
 
 const ExperienceCard: React.FC<{ exp: (typeof EXPERIENCES)[0] }> = ({ exp }) => (
-  <div className="relative pl-8 md:pl-12 pb-12 border-l border-white/10 last:border-0 last:pb-0 group">
-    <div className="absolute left-[-9px] top-0 w-4 h-4 rounded-full bg-blue-500 border-4 border-[#0a0a0c] group-hover:scale-125 transition-transform"></div>
-    
-    <div className="glass p-6 md:p-8 rounded-2xl hover:border-blue-500/30 transition-all">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-2 mb-4">
+  <div className="animate-on-scroll relative pl-8 pb-10 border-l border-white/10 last:border-0 last:pb-0">
+    <div className="absolute left-[-3px] top-1.5 w-1.5 h-1.5 rounded-full bg-blue-500" />
+
+    <div className={`${cardHover} p-6`}>
+      <div className="flex flex-col md:flex-row md:items-start justify-between gap-2 mb-4">
         <div>
-          <h3 className="text-2xl font-bold text-white group-hover:text-blue-400 transition-colors">{exp.role}</h3>
-          <p className="text-blue-500 font-semibold">{exp.company}</p>
+          <h3 className="text-base font-semibold text-white">{exp.role}</h3>
+          <p className="text-blue-500 text-sm mt-0.5">{exp.company}</p>
         </div>
-        <div className="flex flex-col md:items-end">
-          <span className="text-sm font-mono text-slate-500">{exp.period}</span>
-          <span className="text-xs text-slate-600 flex items-center gap-1"><MapPin size={12} /> {exp.location}</span>
+        <div className="md:text-right flex-shrink-0">
+          <p className="text-[10px] font-mono text-slate-600">{exp.period}</p>
+          <p className="text-[10px] text-slate-700 flex items-center gap-1 md:justify-end mt-0.5">
+            <MapPin size={9} /> {exp.location}
+          </p>
         </div>
       </div>
-      
-      <ul className="space-y-3 mb-6">
-        {exp.achievements.map((item, idx) => (
-          <li key={idx} className="flex gap-3 text-slate-400 leading-relaxed">
-            <div className="mt-1.5 flex-shrink-0 w-1.5 h-1.5 rounded-full bg-blue-500/40"></div>
+
+      <ul className="space-y-2 mb-4">
+        {exp.achievements.map((item: string, idx: number) => (
+          <li key={idx} className="text-slate-500 text-sm flex gap-2.5 leading-relaxed">
+            <span className="text-white/20 mt-1.5 flex-shrink-0">—</span>
             {item}
           </li>
         ))}
       </ul>
 
       {exp.technologies && (
-        <div className="flex flex-wrap gap-2">
-          {exp.technologies.map((tech) => (
-            <span key={tech} className="px-3 py-1 rounded-md bg-white/5 border border-white/5 text-xs font-medium text-slate-300">
+        <div className="flex flex-wrap gap-1.5 pt-3 border-t border-white/5">
+          {exp.technologies.map((tech: string) => (
+            <span key={tech} className="px-2 py-0.5 rounded text-[10px] font-mono text-slate-600 border border-white/8">
               {tech}
             </span>
           ))}
@@ -294,171 +286,195 @@ const ExperienceCard: React.FC<{ exp: (typeof EXPERIENCES)[0] }> = ({ exp }) => 
   </div>
 );
 
+// ─── ProjectCard ──────────────────────────────────────────────────────────────
+
+const ProjectCard: React.FC<{ project: (typeof PROJECTS)[0] }> = ({ project }) => (
+  <div className={`animate-on-scroll ${cardHover} flex flex-col p-6`}>
+    <div className="flex justify-between items-start mb-4">
+      <span className="text-[10px] font-medium uppercase tracking-widest text-slate-600">{project.type}</span>
+      <div className="flex items-center gap-2.5">
+        {project.github && (
+          <a href={project.github} target="_blank" rel="noopener noreferrer" aria-label="GitHub" className="text-slate-600 hover:text-slate-300 transition-colors">
+            <Github size={15} />
+          </a>
+        )}
+        {project.link && project.link !== '#' && (
+          <a href={project.link} target="_blank" rel="noopener noreferrer" aria-label="Ver proyecto" className="text-slate-600 hover:text-slate-300 transition-colors">
+            <ExternalLink size={15} />
+          </a>
+        )}
+      </div>
+    </div>
+
+    <h3 className="text-sm font-semibold text-white mb-2">{project.title}</h3>
+    <p className="text-slate-500 text-xs leading-relaxed mb-4 flex-1">{project.description}</p>
+
+    <div className="flex flex-wrap gap-1.5">
+      {project.tags.map((tag: string) => (
+        <span key={tag} className="px-2 py-0.5 rounded text-[10px] font-mono text-slate-600 border border-white/8">
+          {tag}
+        </span>
+      ))}
+    </div>
+  </div>
+);
+
+// ─── SkillGroup ───────────────────────────────────────────────────────────────
+
 const SkillGroup: React.FC<{ category: (typeof SKILL_CATEGORIES)[0] }> = ({ category }) => {
   const Icon = category.icon === 'cloud' ? Cloud : category.icon === 'code' ? Code2 : category.icon === 'database' ? Database : Zap;
-  
   return (
-    <div className="glass p-8 rounded-3xl group hover:bg-white/[0.05] transition-all">
-      <div className="w-14 h-14 rounded-2xl bg-blue-500/10 flex items-center justify-center text-blue-500 mb-6 group-hover:scale-110 transition-transform">
-        <Icon size={28} />
-      </div>
-      <h3 className="text-xl font-bold text-white mb-4">{category.title}</h3>
-      <div className="flex flex-wrap gap-2">
-        {category.skills.map((skill) => (
-          <span key={skill} className="px-3 py-1 rounded-full bg-white/5 text-sm text-slate-400 group-hover:text-slate-200 transition-colors">
-            {skill}
-          </span>
+    <div className={`animate-on-scroll ${cardHover} p-6`}>
+      <Icon size={16} className="text-slate-500 mb-4" />
+      <h3 className="text-sm font-semibold text-white mb-3">{category.title}</h3>
+      <div className="flex flex-wrap gap-x-3 gap-y-1.5">
+        {category.skills.map((skill: string) => (
+          <span key={skill} className="text-xs text-slate-500">{skill}</span>
         ))}
       </div>
     </div>
   );
 };
 
+// ─── App ──────────────────────────────────────────────────────────────────────
+
 const App: React.FC = () => {
+  const [showTop, setShowTop] = useState(false);
+  useScrollReveal();
+
+  useEffect(() => {
+    const fn = () => setShowTop(window.scrollY > 400);
+    window.addEventListener('scroll', fn, { passive: true });
+    return () => window.removeEventListener('scroll', fn);
+  }, []);
+
   return (
-    <div className="min-h-screen selection:bg-blue-500/30">
+    <div className="min-h-screen bg-[#0a0a0c] text-slate-200 selection:bg-blue-500/20">
       <Navbar />
-      
+
       <main>
         <Hero />
 
-        {/* Resumen Profesional */}
-        <section className="py-20 px-6 bg-white/[0.01]">
-          <div className="max-w-4xl mx-auto">
-            <div className="text-center mb-12">
-              <h2 className="text-3xl font-bold text-white mb-6">Resumen Profesional</h2>
-              <p className="text-xl text-slate-400 leading-relaxed text-left md:text-center italic">
-                "Ingeniero de Software con sólida experiencia en desarrollo backend, arquitectura de sistemas y lógica de negocio en sectores de logística y fintech. Especializado en la integración de APIs complejas y optimización de bases de datos para maximizar la eficiencia operativa."
-              </p>
-            </div>
+        {/* Sobre mí */}
+        <section className="py-16 px-6 border-t border-white/5">
+          <div className="max-w-6xl mx-auto max-w-2xl">
+            <p className="text-slate-400 text-base leading-relaxed">
+              Ingeniero de Software con experiencia en desarrollo backend, arquitectura de sistemas y lógica de negocio en sectores de{' '}
+              <span className="text-slate-200">logística</span> y{' '}
+              <span className="text-slate-200">fintech</span>. Especializado en integración de APIs complejas y optimización de bases de datos.
+            </p>
           </div>
         </section>
 
-        {/* Experience Section */}
-        <section id="experience" className="py-24 px-6 scroll-mt-20">
-          <div className="max-w-5xl mx-auto">
-            <div className="mb-16">
-              <h2 className="text-4xl font-bold text-white mb-4">Experiencia Profesional</h2>
-              <div className="w-20 h-1.5 bg-blue-600 rounded-full"></div>
-            </div>
-            
+        {/* Experiencia */}
+        <section id="experience" className="py-20 px-6 border-t border-white/5 scroll-mt-20">
+          <div className="max-w-6xl mx-auto">
+            <SectionHeader title="Experiencia" />
             <div className="flex flex-col">
-              {EXPERIENCES.map((exp, idx) => (
-                <ExperienceCard key={idx} exp={exp} />
-              ))}
+              {EXPERIENCES.map((exp, idx) => <ExperienceCard key={idx} exp={exp} />)}
             </div>
           </div>
         </section>
 
-        {/* Projects Portfolio Section */}
-        <section id="projects" className="py-24 px-6 scroll-mt-20 bg-white/[0.02]">
-          <div className="max-w-7xl mx-auto">
-            <div className="mb-16 flex flex-col md:flex-row md:items-end justify-between gap-6">
-              <div>
-                <h2 className="text-4xl font-bold text-white mb-4">Proyectos Destacados</h2>
-                <div className="w-20 h-1.5 bg-blue-600 rounded-full"></div>
-                <p className="mt-6 text-slate-400 max-w-xl">
-                  Una selección de arquitecturas y soluciones técnicas desarrolladas para optimizar procesos críticos.
-                </p>
-              </div>
-              <a href="https://github.com/eddy1699" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-blue-400 font-bold hover:text-blue-300 transition-colors">
-                Ver más en GitHub <ChevronRight size={20} />
+        {/* Proyectos */}
+        <section id="projects" className="py-20 px-6 border-t border-white/5 scroll-mt-20">
+          <div className="max-w-6xl mx-auto">
+            <div className="flex items-end justify-between mb-12">
+              <SectionHeader title="Proyectos" />
+              <a
+                href="https://github.com/eddy1699"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-xs text-slate-600 hover:text-slate-400 transition-colors flex items-center gap-1.5 mb-12"
+              >
+                <Github size={13} /> GitHub
               </a>
             </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {PROJECTS.map((project, idx) => (
-                <ProjectCard key={idx} project={project} />
-              ))}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {PROJECTS.map((project, idx) => <ProjectCard key={idx} project={project} />)}
             </div>
           </div>
         </section>
 
-        {/* Skills Section */}
-        <section id="skills" className="py-24 px-6 relative overflow-hidden scroll-mt-20">
-          <div className="absolute top-1/2 left-0 w-full h-1/2 bg-blue-900/5 -skew-y-3 -z-10"></div>
-          <div className="max-w-7xl mx-auto">
-            <div className="text-center mb-16">
-              <h2 className="text-4xl font-bold text-white mb-4">Habilidades Técnicas</h2>
-              <p className="text-slate-400">Dominio de stacks modernos para infraestructuras escalables.</p>
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {SKILL_CATEGORIES.map((cat, idx) => (
-                <SkillGroup key={idx} category={cat} />
-              ))}
+        {/* Habilidades */}
+        <section id="skills" className="py-20 px-6 border-t border-white/5 scroll-mt-20">
+          <div className="max-w-6xl mx-auto">
+            <SectionHeader title="Stack técnico" />
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              {SKILL_CATEGORIES.map((cat, idx) => <SkillGroup key={idx} category={cat} />)}
             </div>
           </div>
         </section>
 
-        {/* Education & Info Section */}
-        <section id="education" className="py-24 px-6 bg-[#0c0c0e] scroll-mt-20">
-          <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16">
+        {/* Educación & Contacto */}
+        <section id="education" className="py-20 px-6 border-t border-white/5 scroll-mt-20">
+          <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12">
+            {/* Left */}
             <div>
-              <h2 className="text-4xl font-bold text-white mb-10 flex items-center gap-4">
-                Educación
-              </h2>
-              <div className="space-y-8">
+              <SectionHeader title="Formación" />
+
+              <div className="space-y-4 mb-10">
                 {EDUCATIONS.map((edu, idx) => (
-                  <div key={idx} className="flex gap-6 items-start group">
-                    <div className="w-12 h-12 rounded-xl bg-slate-800 flex items-center justify-center text-slate-400 flex-shrink-0 group-hover:text-blue-400 transition-colors">
-                      <ChevronRight size={24} />
-                    </div>
-                    <div>
-                      <h4 className="text-xl font-bold text-white">{edu.degree}</h4>
-                      <p className="text-slate-400 font-medium">{edu.institution}</p>
-                      <span className="inline-block mt-2 text-xs font-bold uppercase tracking-wider text-blue-500 bg-blue-500/10 px-2 py-1 rounded">
-                        {edu.status}
-                      </span>
-                    </div>
+                  <div key={idx} className={`animate-on-scroll ${cardHover} p-5`}>
+                    <h4 className="text-sm font-semibold text-white mb-1">{edu.degree}</h4>
+                    <p className="text-xs text-slate-500">{edu.institution}</p>
+                    <span className="inline-block mt-2 text-[10px] font-medium uppercase tracking-wider text-blue-500">{edu.status}</span>
                   </div>
                 ))}
               </div>
 
-              <div className="mt-16">
-                <h3 className="text-2xl font-bold text-white mb-6">Idiomas</h3>
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                  <div className="glass p-4 rounded-xl text-center">
-                    <p className="text-slate-400 text-xs font-bold uppercase mb-1">Español</p>
-                    <p className="text-white font-bold">Nativo</p>
+              <p className="text-[10px] font-medium uppercase tracking-widest text-slate-600 mb-3">Idiomas</p>
+              <div className="grid grid-cols-3 gap-3">
+                {[
+                  { lang: 'Español', level: 'Nativo' },
+                  { lang: 'Inglés',  level: 'Avanzado' },
+                  { lang: 'Francés', level: 'Básico' },
+                ].map(({ lang, level }) => (
+                  <div key={lang} className={`${card} p-3 text-center`}>
+                    <p className="text-[10px] text-slate-600 uppercase mb-1">{lang}</p>
+                    <p className="text-xs text-white font-medium">{level}</p>
                   </div>
-                  <div className="glass p-4 rounded-xl text-center border-blue-500/20">
-                    <p className="text-blue-400 text-xs font-bold uppercase mb-1">Inglés</p>
-                    <p className="text-white font-bold">Avanzado</p>
-                  </div>
-                  <div className="glass p-4 rounded-xl text-center">
-                    <p className="text-slate-400 text-xs font-bold uppercase mb-1">Francés</p>
-                    <p className="text-white font-bold">Básico</p>
-                  </div>
-                </div>
+                ))}
               </div>
             </div>
 
-            <div className="glass p-10 rounded-[2rem] flex flex-col justify-between">
-              <div>
-                <h2 className="text-3xl font-bold text-white mb-6">Habilidades Blandas</h2>
-                <div className="flex flex-wrap gap-3">
-                  {["Trabajo en equipo", "Autodidacta", "Comunicación efectiva", "Adaptabilidad", "Liderazgo Técnico"].map(skill => (
-                    <span key={skill} className="px-4 py-2 rounded-xl bg-white/5 border border-white/5 text-slate-300 font-medium">
-                      {skill}
-                    </span>
-                  ))}
-                </div>
+            {/* Right */}
+            <div>
+              <SectionHeader title="Contacto" />
+
+              <div className="space-y-2 mb-8">
+                {[
+                  { icon: <Mail size={14} />, text: 'edgardosamame@gmail.com', href: 'mailto:edgardosamame@gmail.com' },
+                  { icon: <Phone size={14} />, text: '+51 936 430 407', href: undefined },
+                  { icon: <MapPin size={14} />, text: 'La Molina, Lima, Perú', href: undefined },
+                ].map(({ icon, text, href }) =>
+                  href ? (
+                    <a key={text} href={href} className={`flex items-center gap-3 p-3 rounded-lg ${cardHover}`}>
+                      <span className="text-slate-500">{icon}</span>
+                      <span className="text-sm text-slate-400">{text}</span>
+                    </a>
+                  ) : (
+                    <div key={text} className={`flex items-center gap-3 p-3 ${card}`}>
+                      <span className="text-slate-600">{icon}</span>
+                      <span className="text-sm text-slate-500">{text}</span>
+                    </div>
+                  )
+                )}
               </div>
 
-              <div className="mt-12 space-y-4">
-                <p className="text-slate-400 mb-6">Información de contacto:</p>
-                <div className="flex items-center gap-4 text-slate-300">
-                  <Mail className="text-blue-500" size={20} />
-                  <span>edgardosamame@gmail.com</span>
-                </div>
-                <div className="flex items-center gap-4 text-slate-300">
-                  <Phone className="text-blue-500" size={20} />
-                  <span>+51 936 430 407</span>
-                </div>
-                <div className="flex items-center gap-4 text-slate-300">
-                  <MapPin className="text-blue-500" size={20} />
-                  <span>La Molina, Lima, Perú</span>
+              <a
+                href="mailto:edgardosamame@gmail.com"
+                className="flex items-center justify-center gap-2 py-3 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-sm font-semibold transition-colors"
+              >
+                <Mail size={15} /> Enviar mensaje
+              </a>
+
+              <div className="mt-8 pt-6 border-t border-white/5">
+                <p className="text-[10px] font-medium uppercase tracking-widest text-slate-600 mb-3">Habilidades blandas</p>
+                <div className="flex flex-wrap gap-2">
+                  {['Trabajo en equipo', 'Autodidacta', 'Comunicación', 'Adaptabilidad', 'Liderazgo técnico'].map(s => (
+                    <span key={s} className={`${card} px-3 py-1 text-xs text-slate-500`}>{s}</span>
+                  ))}
                 </div>
               </div>
             </div>
@@ -466,20 +482,28 @@ const App: React.FC = () => {
         </section>
       </main>
 
-      <footer className="py-12 px-6 border-t border-white/5 text-center">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
-          <p className="text-slate-500 text-sm">
-            © {new Date().getFullYear()} Edgardo Samamé. Diseñado para el alto rendimiento.
-          </p>
-          <div className="flex gap-4">
-            <a href="https://github.com/eddy1699" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full glass flex items-center justify-center text-slate-400 hover:text-white hover:bg-white/10 transition-all">
-              <Github size={20} />
+      {showTop && (
+        <button
+          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+          aria-label="Volver arriba"
+          className="fixed bottom-8 right-8 z-50 w-10 h-10 rounded-lg border border-white/10 bg-[#0a0a0c] hover:border-white/20 text-slate-400 hover:text-white flex items-center justify-center transition-all"
+        >
+          <ArrowUp size={16} />
+        </button>
+      )}
+
+      <footer className="py-10 px-6 border-t border-white/5">
+        <div className="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+          <p className="text-slate-700 text-xs">© {new Date().getFullYear()} Edgardo Samamé</p>
+          <div className="flex gap-3">
+            <a href="https://github.com/eddy1699" target="_blank" rel="noopener noreferrer" aria-label="GitHub" className="text-slate-600 hover:text-slate-400 transition-colors">
+              <Github size={18} />
             </a>
-            <a href="https://linkedin.com/in/edgardosamame" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full glass flex items-center justify-center text-slate-400 hover:text-blue-400 hover:bg-white/10 transition-all">
-              <Linkedin size={20} />
+            <a href="https://linkedin.com/in/edgardosamame" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" className="text-slate-600 hover:text-blue-400 transition-colors">
+              <Linkedin size={18} />
             </a>
-            <a href="mailto:edgardosamame@gmail.com" className="w-10 h-10 rounded-full glass flex items-center justify-center text-slate-400 hover:text-red-400 hover:bg-white/10 transition-all">
-              <Mail size={20} />
+            <a href="mailto:edgardosamame@gmail.com" aria-label="Email" className="text-slate-600 hover:text-slate-400 transition-colors">
+              <Mail size={18} />
             </a>
           </div>
         </div>

@@ -1,15 +1,3 @@
-
-import React from 'react';
-import { 
-  Cloud, 
-  Code2, 
-  Database, 
-  Zap, 
-  Terminal, 
-  Layers,
-  Globe,
-  Award
-} from 'lucide-react';
 import { Experience, SkillCategory, Education, Project } from './types';
 
 export const EXPERIENCES: Experience[] = [
@@ -113,27 +101,6 @@ export const PROJECTS: Project[] = [
     tags: ["Vue", "Tailwind"],
     type: "Landing Page",
     link: "https://consorcioeinversiones.netlify.app/"
-  },
-     {
-    title: "The Last Echo",
-    description: "Landing page para un proyecto musical, desarrollada con React y Tailwind CSS, enfocada en la promoción de contenido multimedia.",
-    tags: ["React", "Tailwind"],
-    type: "Landing Page",
-    link: "https://thelastecho.netlify.app"
-  },
-     {
-    title: "Lumina Film Fest",
-    description: "Landing page para un festival de cine, creada con React y Tailwind CSS, destacando la programación y eventos del festival.",
-    tags: ["React", "Tailwind"],
-    type: "Landing Page",
-    link: "https://luminafilmfest.netlify.app/"
-  },
-      {
-    title: "Cine Flow Festival",
-    description: "Landing page para un festival de cine independiente, desarrollada con React y Tailwind CSS, con enfoque en la experiencia del usuario.",
-    tags: ["React", "Tailwind"],
-    type: "Landing Page",
-    link: "https://flowcine.netlify.app/"
   },
 ];
 
