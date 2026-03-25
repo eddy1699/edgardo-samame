@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(grep -E '\\(sk-[a-zA-Z0-9]{20,}|sk_live_[a-zA-Z0-9]+|sk_test_[a-zA-Z0-9]+|ghp_[a-zA-Z0-9]{36}|gho_[a-zA-Z0-9]{36}|glpat-[a-zA-Z0-9_-]+|AKIA[A-Z0-9]{16}|xox[baprs]-[a-zA-Z0-9-]+|-----BEGIN.*PRIVATE KEY|eyJ[a-zA-Z0-9_-]+\\\\.eyJ[a-zA-Z0-9_-]+\\\\.\\)' .planning/codebase/*.md)",
+      "Bash(node \"~/.claude/get-shit-done/bin/gsd-tools.cjs\" commit \"docs: map existing codebase\" --files .planning/codebase/*.md)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(node \"~/.claude/get-shit-done/bin/gsd-tools.cjs\" config-new-project '{\"\"mode\"\":\"\"yolo\"\",\"\"granularity\"\":\"\"coarse\"\",\"\"parallelization\"\":true,\"\"commit_docs\"\":true,\"\"model_profile\"\":\"\"balanced\"\",\"\"workflow\"\":{\"\"research\"\":true,\"\"plan_check\"\":true,\"\"verifier\"\":true,\"\"nyquist_validation\"\":true,\"\"auto_advance\"\":false}}')",
+      "Bash(node \"~/.claude/get-shit-done/bin/gsd-tools.cjs\" commit \"chore: add project config\" --files .planning/config.json)",
+      "Bash(node \"~/.claude/get-shit-done/bin/gsd-tools.cjs\" commit \"docs: initialize project\" --files .planning/PROJECT.md)",
+      "Bash(npx tsc:*)"
+    ]
+  }
+}

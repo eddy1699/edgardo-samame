@@ -40,6 +40,34 @@ export const EXPERIENCES: Experience[] = [
 
 export const PROJECTS: Project[] = [
   {
+    title: "Alimday — Alimentación Corporativa",
+    description: "Landing page corporativa para empresa de catering. Formulario de cotización, sección de servicios, certificaciones BPM/HACCP. +50 empresas atendidas.",
+    tags: ["React", "Tailwind", "Vite", "FormSubmit"],
+    type: "Web Corporativa",
+    link: "https://alimday.netlify.app"
+  },
+  {
+    title: "Sistema de Pedidos Online",
+    description: "Plataforma donde los clientes hacen pedidos desde el celular, pagan por Yape, adjuntan comprobante y el negocio recibe todo por WhatsApp al instante.",
+    tags: ["React", "Node.js", "WhatsApp API"],
+    type: "SaaS / Producto",
+    link: "https://pedidosdemo.netlify.app/"
+  },
+  {
+    title: "Eddy's Ride — Menú Digital con QR",
+    description: "Menú digital para venta de snacks en servicio de transporte. Escaneo por QR, diseño mobile-first, sección de servicios tech integrada.",
+    tags: ["HTML", "CSS", "JavaScript"],
+    type: "Landing Page",
+    link: "#"
+  },
+  {
+    title: "Vibe Coding Workshop",
+    description: "Landing page para taller de 3 sesiones sobre construcción de productos con IA. Animaciones de terminal, scroll reveal, diseño dark premium.",
+    tags: ["HTML", "CSS", "JavaScript"],
+    type: "Landing Page",
+    link: "#"
+  },
+  {
     title: "ShipIT Global Orchestrator",
     description: "Middleware de alta disponibilidad para la sincronización de guías y estados de envío con carriers internacionales. Procesa +10k peticiones/hora.",
     tags: [".NET Core", "SQL Server", "Redis", "Rest/SOAP"],
@@ -124,6 +152,11 @@ export const SKILL_CATEGORIES: SkillCategory[] = [
     title: "Integraciones",
     skills: ["RESTful APIs", "SOAP", "Webhooks", "Pasarelas de Pago (Izipay, Payme)", "APIs Logísticas"],
     icon: "zap"
+  },
+  {
+    title: "IA & Herramientas",
+    skills: ["Claude AI", "Microsoft 365 Copilot", "Prompt Engineering", "Vibe Coding", "Agentes AI", "Automatización con IA"],
+    icon: "brain"
   }
 ];
 

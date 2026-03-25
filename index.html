@@ -4,21 +4,21 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Edgardo Samamé | Ingeniero de Software Senior</title>
-    <meta name="description" content="Ingeniero de Software Senior especializado en backend, arquitectura escalable y AWS. Experto en Node.js, TypeScript, C#/.NET e integraciones logísticas y fintech." />
+    <title>Edgardo Samamé | Ingeniero de Software &amp; Experto en IA</title>
+    <meta name="description" content="Ingeniero de software especializado en IA y soluciones tecnológicas. Páginas web, sistemas de pedidos, automatización y más para empresas en Lima, Perú." />
     <meta name="author" content="Edgardo Samamé" />
     <meta name="robots" content="index, follow" />
 
     <!-- Open Graph -->
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="Edgardo Samamé | Ingeniero de Software Senior" />
-    <meta property="og:description" content="Especialista en desarrollo backend con Node.js, TypeScript y AWS. Transformo la complejidad logística y fintech en soluciones nativas en la nube de alto rendimiento." />
-    <meta property="og:url" content="https://edgardosamame.dev" />
+    <meta property="og:title" content="Edgardo Samamé | Ingeniero de Software &amp; Experto en IA" />
+    <meta property="og:description" content="Ingeniero de software especializado en IA y soluciones tecnológicas. Páginas web, sistemas de pedidos, automatización y más para empresas en Lima, Perú." />
+    <meta property="og:url" content="https://edgardosamame.netlify.app" />
 
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary" />
-    <meta name="twitter:title" content="Edgardo Samamé | Ingeniero de Software Senior" />
-    <meta name="twitter:description" content="Especialista en desarrollo backend con Node.js, TypeScript y AWS." />
+    <meta name="twitter:title" content="Edgardo Samamé | Ingeniero de Software &amp; Experto en IA" />
+    <meta name="twitter:description" content="Ingeniero de software especializado en IA y soluciones tecnológicas. Páginas web, sistemas de pedidos, automatización y más para empresas en Lima, Perú." />
 
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -26,6 +26,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
       body { font-family: 'Inter', sans-serif; }
+
+      /* Scroll-up animation */
       .animate-on-scroll {
         opacity: 0;
         transform: translateY(16px);
@@ -38,6 +40,29 @@
       .animate-on-scroll:nth-child(2) { transition-delay: 0.07s; }
       .animate-on-scroll:nth-child(3) { transition-delay: 0.14s; }
       .animate-on-scroll:nth-child(4) { transition-delay: 0.21s; }
+
+      /* Directional animations */
+      .animate-from-left {
+        opacity: 0;
+        transform: translateX(-24px);
+        transition: opacity 0.5s ease, transform 0.5s ease;
+      }
+      .animate-from-right {
+        opacity: 0;
+        transform: translateX(24px);
+        transition: opacity 0.5s ease, transform 0.5s ease;
+      }
+      .animate-from-left.animate-visible,
+      .animate-from-right.animate-visible {
+        opacity: 1;
+        transform: translateX(0);
+      }
+
+      /* Services stagger */
+      .services-grid > *:nth-child(1) { transition-delay: 0s; }
+      .services-grid > *:nth-child(2) { transition-delay: 0.1s; }
+      .services-grid > *:nth-child(3) { transition-delay: 0.2s; }
+      .services-grid > *:nth-child(4) { transition-delay: 0.3s; }
     </style>
   <script type="importmap">
 {

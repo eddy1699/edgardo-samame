@@ -14,6 +14,11 @@ import {
   Database,
   Zap,
   ArrowUp,
+  Brain,
+  Globe,
+  ShoppingCart,
+  BarChart3,
+  MessageCircle,
 } from 'lucide-react';
 import { EXPERIENCES, SKILL_CATEGORIES, EDUCATIONS, PROJECTS } from './constants';
 import profilePhoto from './edgardo-samame.jpg';
@@ -46,7 +51,7 @@ const useScrollReveal = () => {
       }),
       { threshold: 0.1 }
     );
-    document.querySelectorAll('.animate-on-scroll').forEach((el) => obs.observe(el));
+    document.querySelectorAll('.animate-on-scroll, .animate-from-left, .animate-from-right').forEach((el) => obs.observe(el));
     return () => obs.disconnect();
   }, []);
 };
@@ -56,16 +61,80 @@ const useScrollReveal = () => {
 const card = 'border border-white/10 bg-white/[0.02] rounded-xl';
 const cardHover = `${card} hover:border-white/20 hover:bg-white/[0.04] transition-colors`;
 
+// ─── Services data ────────────────────────────────────────────────────────────
+
+const SERVICES_DATA = [
+  {
+    icon: Globe,
+    title: 'Páginas Web & Landing Pages',
+    description: 'Diseño y desarrollo de páginas web profesionales que generan confianza y convierten visitantes en clientes. Optimizadas para móvil y SEO.',
+    example: 'alimday.com',
+    accentLine: 'bg-emerald-500',
+    iconColor: 'text-emerald-400',
+    btnColor: 'text-emerald-400 hover:text-emerald-300',
+    waMessage: 'Hola Edgardo, me interesa una página web o landing page para mi negocio.',
+    animClass: 'animate-from-left',
+  },
+  {
+    icon: ShoppingCart,
+    title: 'Sistemas de Pedidos Online',
+    description: 'Tus clientes piden desde el celular, pagan por Yape y tú recibes todo por WhatsApp con el detalle completo. Sin apps, sin descargas.',
+    example: 'pedidosdemo.netlify.app',
+    accentLine: 'bg-teal-500',
+    iconColor: 'text-teal-400',
+    btnColor: 'text-teal-400 hover:text-teal-300',
+    waMessage: 'Hola Edgardo, me interesa el sistema de pedidos online para mi negocio.',
+    animClass: 'animate-from-right',
+  },
+  {
+    icon: BarChart3,
+    title: 'Gestión de Ventas por Suscripción',
+    description: 'Plataforma para que tus clientes hagan pedidos recurrentes cada mes de forma automática. Ideal para negocios con clientes frecuentes.',
+    example: undefined as string | undefined,
+    accentLine: 'bg-cyan-500',
+    iconColor: 'text-cyan-400',
+    btnColor: 'text-cyan-400 hover:text-cyan-300',
+    waMessage: 'Hola Edgardo, me interesa la plataforma de gestión de ventas por suscripción.',
+    animClass: 'animate-from-left',
+  },
+  {
+    icon: Zap,
+    title: 'Automatización & Soluciones a Medida',
+    description: 'Automatizo procesos repetitivos, creo integraciones entre sistemas, bots y herramientas con IA. Si ya tienes un sistema y no estás conforme, también puedo mejorarlo.',
+    example: undefined as string | undefined,
+    accentLine: 'bg-green-400',
+    iconColor: 'text-green-400',
+    btnColor: 'text-green-400 hover:text-green-300',
+    waMessage: 'Hola Edgardo, me interesa automatizar procesos o una solución a medida.',
+    animClass: 'animate-from-right',
+  },
+];
+
+// ─── Type badge colors ────────────────────────────────────────────────────────
+
+const TYPE_BADGE: Record<string, string> = {
+  'SaaS / Producto':         'text-cyan-400 border-cyan-500/20 bg-cyan-500/5',
+  'Web Corporativa':         'text-emerald-400 border-emerald-500/20 bg-emerald-500/5',
+  'Landing Page':            'text-teal-400 border-teal-500/20 bg-teal-500/5',
+  'Logistics / Backend':     'text-orange-400 border-orange-500/20 bg-orange-500/5',
+  'Fintech / Payments':      'text-yellow-400 border-yellow-500/20 bg-yellow-500/5',
+  'DevOps / Infrastructure': 'text-slate-300 border-slate-500/20 bg-slate-500/5',
+  'Web App':                 'text-pink-400 border-pink-500/20 bg-pink-500/5',
+};
+
 // ─── SectionHeader ────────────────────────────────────────────────────────────
 
 const SectionHeader: React.FC<{
   title: string;
   subtitle?: string;
   align?: 'left' | 'center';
-}> = ({ title, subtitle, align = 'left' }) => (
+  gradient?: boolean;
+}> = ({ title, subtitle, align = 'left', gradient = false }) => (
   <div className={`mb-12 ${align === 'center' ? 'text-center' : ''}`}>
-    <h2 className="text-2xl font-bold text-white mb-3">{title}</h2>
-    <div className={`w-6 h-px bg-blue-500 ${align === 'center' ? 'mx-auto' : ''}`} />
+    <h2 className={`text-2xl font-bold mb-3 ${gradient ? 'bg-gradient-to-r from-emerald-400 to-teal-400 bg-clip-text text-transparent' : 'text-white'}`}>
+      {title}
+    </h2>
+    <div className={`w-6 h-px bg-emerald-500 ${align === 'center' ? 'mx-auto' : ''}`} />
     {subtitle && (
       <p className={`mt-4 text-slate-500 text-sm max-w-lg ${align === 'center' ? 'mx-auto' : ''}`}>
         {subtitle}
@@ -79,7 +148,7 @@ const SectionHeader: React.FC<{
 const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
-  const active = useActiveSection(['home', 'experience', 'projects', 'skills', 'education']);
+  const active = useActiveSection(['home', 'services', 'experience', 'projects', 'skills', 'education']);
 
   useEffect(() => {
     const fn = () => setScrolled(window.scrollY > 20);
@@ -89,6 +158,7 @@ const Navbar = () => {
 
   const links = [
     { label: 'Inicio',      href: '#home' },
+    { label: 'Servicios',   href: '#services' },
     { label: 'Experiencia', href: '#experience' },
     { label: 'Proyectos',   href: '#projects' },
     { label: 'Habilidades', href: '#skills' },
@@ -109,7 +179,7 @@ const Navbar = () => {
     <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? 'bg-[#0a0a0c]/90 backdrop-blur-md border-b border-white/5 py-4' : 'py-6'}`}>
       <div className="max-w-6xl mx-auto px-6 flex justify-between items-center">
         <a href="#home" onClick={(e) => scrollTo(e, '#home')} className="text-sm font-bold tracking-tight text-white">
-          EDGARDO <span className="text-blue-500">SAMAMÉ</span>
+          EDGARDO <span className="text-emerald-500">SAMAMÉ</span>
         </a>
 
         <div className="hidden md:flex gap-8 items-center">
@@ -123,7 +193,10 @@ const Navbar = () => {
               {label}
             </a>
           ))}
-          <a href="mailto:edgardosamame@gmail.com" className="text-xs font-semibold px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-white transition-colors">
+          <a
+            href="mailto:edgardosamame@gmail.com"
+            className="text-xs font-semibold px-4 py-2 rounded-lg bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white transition-all"
+          >
             Contacto
           </a>
         </div>
@@ -140,12 +213,15 @@ const Navbar = () => {
               key={label}
               href={href}
               onClick={(e) => scrollTo(e, href)}
-              className={`text-2xl font-bold pb-4 border-b border-white/5 ${active === href.replace('#', '') ? 'text-blue-400' : 'text-white'}`}
+              className={`text-2xl font-bold pb-4 border-b border-white/5 ${active === href.replace('#', '') ? 'text-emerald-400' : 'text-white'}`}
             >
               {label}
             </a>
           ))}
-          <a href="mailto:edgardosamame@gmail.com" className="mt-4 py-3 text-center rounded-lg bg-blue-600 text-white font-semibold">
+          <a
+            href="mailto:edgardosamame@gmail.com"
+            className="mt-4 py-3 text-center rounded-lg bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-semibold"
+          >
             Contacto
           </a>
         </div>
@@ -158,22 +234,22 @@ const Navbar = () => {
 
 const Hero = () => (
   <section id="home" className="relative pt-28 pb-20 md:pt-36 md:pb-28 px-6 overflow-hidden scroll-mt-20">
-    <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-blue-600/5 rounded-full blur-[140px] -z-10" />
+    <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-emerald-600/5 rounded-full blur-[140px] -z-10" />
 
     <div className="max-w-6xl mx-auto flex flex-col-reverse md:flex-row items-center gap-16">
       {/* Text */}
       <div className="flex-1 flex flex-col items-center md:items-start text-center md:text-left">
         <p className="text-slate-600 text-xs font-medium uppercase tracking-widest mb-5">
-          Ingeniero de Software Senior · Lima, Perú
+          Ingeniero de Software &amp; Experto en IA · Lima, Perú
         </p>
 
         <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-white mb-6 leading-[1.1]">
-          Backend &amp;<br />
-          <span className="text-blue-500">Arquitectura</span> Escalable
+          Ingeniero de Software &amp;<br />
+          <span className="bg-gradient-to-r from-emerald-400 to-teal-400 bg-clip-text text-transparent">Experto en IA</span>
         </h1>
 
         <p className="text-slate-400 text-base max-w-md mb-10 leading-relaxed">
-          Especialista en Node.js, TypeScript y AWS. Transformo la complejidad logística y fintech en soluciones de alto rendimiento.
+          Creo soluciones tecnológicas que ayudan a empresas y negocios a vender más, automatizar procesos y tener presencia digital profesional.
         </p>
 
         <div className="flex flex-wrap gap-3 justify-center md:justify-start">
@@ -181,28 +257,28 @@ const Hero = () => (
             href="https://linkedin.com/in/edgardosamame"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-2 px-5 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-sm font-semibold transition-colors"
+            className="flex items-center gap-2 px-5 py-2.5 rounded-lg bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-sm font-semibold transition-all"
           >
             LinkedIn <ExternalLink size={14} />
           </a>
           <a
-            href="#projects"
+            href="#services"
             onClick={(e: React.MouseEvent<HTMLAnchorElement>) => {
               e.preventDefault();
-              document.getElementById('projects')?.scrollIntoView({ behavior: 'smooth' });
+              document.getElementById('services')?.scrollIntoView({ behavior: 'smooth' });
             }}
             className="flex items-center gap-2 px-5 py-2.5 rounded-lg border border-white/10 hover:border-white/20 text-white text-sm font-semibold transition-colors"
           >
-            Ver proyectos
+            Ver mis servicios
           </a>
         </div>
 
         <div className="mt-12 grid grid-cols-2 sm:grid-cols-4 gap-3 w-full">
           {[
-            { value: '4+',   label: 'Años exp.' },
-            { value: '9',    label: 'Proyectos' },
-            { value: '3',    label: 'Empresas' },
-            { value: '10k+', label: 'Req/hora' },
+            { value: '+4',  label: 'Años exp.' },
+            { value: '+15', label: 'Proyectos' },
+            { value: '+50', label: 'Empresas' },
+            { value: 'IA',  label: 'Experto' },
           ].map(({ value, label }) => (
             <div key={label} className="border border-white/10 rounded-lg p-4 text-center">
               <p className="text-xl font-bold text-white mb-0.5">{value}</p>
@@ -221,8 +297,8 @@ const Hero = () => (
             className="w-full h-full rounded-full object-cover object-top border border-white/10"
           />
           <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 whitespace-nowrap flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-white/10 bg-[#0a0a0c] text-[10px] text-slate-500">
-            <span className="w-1.5 h-1.5 rounded-full bg-green-400 flex-shrink-0" />
-            E2OPEN by Wisetech
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 flex-shrink-0 animate-pulse" />
+            Disponible para proyectos
           </div>
         </div>
       </div>
@@ -244,17 +320,56 @@ const Hero = () => (
   </section>
 );
 
+// ─── Services ─────────────────────────────────────────────────────────────────
+
+const Services = () => (
+  <section id="services" className="py-20 px-6 border-t border-white/5 scroll-mt-20">
+    <div className="max-w-6xl mx-auto">
+      <SectionHeader title="Servicios" gradient />
+      <div className="services-grid grid grid-cols-1 md:grid-cols-2 gap-4">
+        {SERVICES_DATA.map((service, idx) => {
+          const Icon = service.icon;
+          return (
+            <div
+              key={idx}
+              className={`${service.animClass} border border-white/5 bg-white/[0.02] rounded-xl overflow-hidden flex flex-col transition-all duration-300 hover:-translate-y-1 hover:border-white/20 hover:bg-white/[0.04]`}
+            >
+              <div className={`h-[3px] w-full ${service.accentLine}`} />
+              <div className="p-6 flex flex-col flex-1">
+                <Icon size={22} className={`${service.iconColor} mb-4`} />
+                <h3 className="text-base font-semibold text-white mb-3">{service.title}</h3>
+                <p className="text-slate-500 text-sm leading-relaxed mb-4 flex-1">{service.description}</p>
+                {service.example && (
+                  <p className="text-[10px] text-slate-600 mb-3 font-mono">e.g. {service.example}</p>
+                )}
+                <a
+                  href={`https://wa.me/51XXXXXXXXX?text=${encodeURIComponent(service.waMessage)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={`text-xs font-semibold ${service.btnColor} transition-colors`}
+                >
+                  Más info →
+                </a>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  </section>
+);
+
 // ─── ExperienceCard ───────────────────────────────────────────────────────────
 
 const ExperienceCard: React.FC<{ exp: (typeof EXPERIENCES)[0] }> = ({ exp }) => (
   <div className="animate-on-scroll relative pl-8 pb-10 border-l border-white/10 last:border-0 last:pb-0">
-    <div className="absolute left-[-3px] top-1.5 w-1.5 h-1.5 rounded-full bg-blue-500" />
+    <div className="absolute left-[-3px] top-1.5 w-1.5 h-1.5 rounded-full bg-emerald-500" />
 
     <div className={`${cardHover} p-6`}>
       <div className="flex flex-col md:flex-row md:items-start justify-between gap-2 mb-4">
         <div>
           <h3 className="text-base font-semibold text-white">{exp.role}</h3>
-          <p className="text-blue-500 text-sm mt-0.5">{exp.company}</p>
+          <p className="text-emerald-500 text-sm mt-0.5">{exp.company}</p>
         </div>
         <div className="md:text-right flex-shrink-0">
           <p className="text-[10px] font-mono text-slate-600">{exp.period}</p>
@@ -288,41 +403,51 @@ const ExperienceCard: React.FC<{ exp: (typeof EXPERIENCES)[0] }> = ({ exp }) => 
 
 // ─── ProjectCard ──────────────────────────────────────────────────────────────
 
-const ProjectCard: React.FC<{ project: (typeof PROJECTS)[0] }> = ({ project }) => (
-  <div className={`animate-on-scroll ${cardHover} flex flex-col p-6`}>
-    <div className="flex justify-between items-start mb-4">
-      <span className="text-[10px] font-medium uppercase tracking-widest text-slate-600">{project.type}</span>
-      <div className="flex items-center gap-2.5">
-        {project.github && (
-          <a href={project.github} target="_blank" rel="noopener noreferrer" aria-label="GitHub" className="text-slate-600 hover:text-slate-300 transition-colors">
-            <Github size={15} />
-          </a>
-        )}
-        {project.link && project.link !== '#' && (
-          <a href={project.link} target="_blank" rel="noopener noreferrer" aria-label="Ver proyecto" className="text-slate-600 hover:text-slate-300 transition-colors">
-            <ExternalLink size={15} />
-          </a>
-        )}
+const ProjectCard: React.FC<{ project: (typeof PROJECTS)[0] }> = ({ project }) => {
+  const badgeClass = TYPE_BADGE[project.type] || 'text-slate-500 border-white/10 bg-white/[0.02]';
+  return (
+    <div className={`animate-on-scroll ${cardHover} flex flex-col p-6 hover:shadow-[0_0_20px_rgba(16,185,129,0.06)] transition-all`}>
+      <div className="flex justify-between items-start mb-4">
+        <span className={`text-[10px] font-medium px-2 py-0.5 rounded-full border ${badgeClass}`}>{project.type}</span>
+        <div className="flex items-center gap-2.5">
+          {project.github && (
+            <a href={project.github} target="_blank" rel="noopener noreferrer" aria-label="GitHub" className="text-slate-600 hover:text-slate-300 transition-colors">
+              <Github size={15} />
+            </a>
+          )}
+          {project.link && project.link !== '#' && (
+            <a href={project.link} target="_blank" rel="noopener noreferrer" aria-label="Ver proyecto" className="text-slate-600 hover:text-slate-300 transition-colors">
+              <ExternalLink size={15} />
+            </a>
+          )}
+        </div>
+      </div>
+
+      <h3 className="text-sm font-semibold text-white mb-2">{project.title}</h3>
+      <p className="text-slate-500 text-xs leading-relaxed mb-4 flex-1">{project.description}</p>
+
+      <div className="flex flex-wrap gap-1.5">
+        {project.tags.map((tag: string) => (
+          <span key={tag} className="px-2 py-0.5 rounded text-[10px] font-mono text-slate-600 border border-white/8">
+            {tag}
+          </span>
+        ))}
       </div>
     </div>
-
-    <h3 className="text-sm font-semibold text-white mb-2">{project.title}</h3>
-    <p className="text-slate-500 text-xs leading-relaxed mb-4 flex-1">{project.description}</p>
-
-    <div className="flex flex-wrap gap-1.5">
-      {project.tags.map((tag: string) => (
-        <span key={tag} className="px-2 py-0.5 rounded text-[10px] font-mono text-slate-600 border border-white/8">
-          {tag}
-        </span>
-      ))}
-    </div>
-  </div>
-);
+  );
+};
 
 // ─── SkillGroup ───────────────────────────────────────────────────────────────
 
 const SkillGroup: React.FC<{ category: (typeof SKILL_CATEGORIES)[0] }> = ({ category }) => {
-  const Icon = category.icon === 'cloud' ? Cloud : category.icon === 'code' ? Code2 : category.icon === 'database' ? Database : Zap;
+  const iconMap: Record<string, React.ElementType> = {
+    cloud: Cloud,
+    code: Code2,
+    database: Database,
+    zap: Zap,
+    brain: Brain,
+  };
+  const Icon = iconMap[category.icon] || Zap;
   return (
     <div className={`animate-on-scroll ${cardHover} p-6`}>
       <Icon size={16} className="text-slate-500 mb-4" />
@@ -349,7 +474,7 @@ const App: React.FC = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-[#0a0a0c] text-slate-200 selection:bg-blue-500/20">
+    <div className="min-h-screen bg-[#0a0a0c] text-slate-200 selection:bg-emerald-500/20">
       <Navbar />
 
       <main>
@@ -358,13 +483,22 @@ const App: React.FC = () => {
         {/* Sobre mí */}
         <section className="py-16 px-6 border-t border-white/5">
           <div className="max-w-6xl mx-auto max-w-2xl">
+            <SectionHeader title="Sobre mí" />
+            <p className="text-slate-400 text-base leading-relaxed mb-4">
+              Soy ingeniero de software y experto en IA con +4 años de experiencia construyendo soluciones tecnológicas para empresas. He trabajado en{' '}
+              <span className="text-slate-200">E2open</span> y{' '}
+              <span className="text-slate-200">Delfosti/Izipay</span>{' '}
+              desarrollando sistemas de alta disponibilidad, integraciones con carriers internacionales y pasarelas de pago.
+            </p>
             <p className="text-slate-400 text-base leading-relaxed">
-              Ingeniero de Software con experiencia en desarrollo backend, arquitectura de sistemas y lógica de negocio en sectores de{' '}
-              <span className="text-slate-200">logística</span> y{' '}
-              <span className="text-slate-200">fintech</span>. Especializado en integración de APIs complejas y optimización de bases de datos.
+              Hoy me especializo en ayudar a empresas y negocios a mejorar su presencia digital, automatizar sus procesos y vender más con tecnología. Si necesitas una web profesional, un sistema de pedidos, o cualquier solución tech —{' '}
+              <span className="text-slate-200">conversemos.</span>
             </p>
           </div>
         </section>
+
+        {/* Servicios */}
+        <Services />
 
         {/* Experiencia */}
         <section id="experience" className="py-20 px-6 border-t border-white/5 scroll-mt-20">
@@ -380,7 +514,7 @@ const App: React.FC = () => {
         <section id="projects" className="py-20 px-6 border-t border-white/5 scroll-mt-20">
           <div className="max-w-6xl mx-auto">
             <div className="flex items-end justify-between mb-12">
-              <SectionHeader title="Proyectos" />
+              <SectionHeader title="Proyectos" gradient />
               <a
                 href="https://github.com/eddy1699"
                 target="_blank"
@@ -399,7 +533,7 @@ const App: React.FC = () => {
         {/* Habilidades */}
         <section id="skills" className="py-20 px-6 border-t border-white/5 scroll-mt-20">
           <div className="max-w-6xl mx-auto">
-            <SectionHeader title="Stack técnico" />
+            <SectionHeader title="Stack técnico" gradient />
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               {SKILL_CATEGORIES.map((cat, idx) => <SkillGroup key={idx} category={cat} />)}
             </div>
@@ -418,7 +552,7 @@ const App: React.FC = () => {
                   <div key={idx} className={`animate-on-scroll ${cardHover} p-5`}>
                     <h4 className="text-sm font-semibold text-white mb-1">{edu.degree}</h4>
                     <p className="text-xs text-slate-500">{edu.institution}</p>
-                    <span className="inline-block mt-2 text-[10px] font-medium uppercase tracking-wider text-blue-500">{edu.status}</span>
+                    <span className="inline-block mt-2 text-[10px] font-medium uppercase tracking-wider text-emerald-500">{edu.status}</span>
                   </div>
                 ))}
               </div>
@@ -438,18 +572,29 @@ const App: React.FC = () => {
               </div>
             </div>
 
-            {/* Right */}
+            {/* Right — Contacto */}
             <div>
               <SectionHeader title="Contacto" />
 
+              <p className="text-slate-500 text-sm mb-6 leading-relaxed">
+                ¿Tienes un proyecto en mente? Escríbeme y conversemos sin compromiso.
+              </p>
+
               <div className="space-y-2 mb-8">
                 {[
+                  { icon: <MessageCircle size={14} />, text: 'WhatsApp: +51 936 430 407', href: 'https://wa.me/51XXXXXXXXX' },
                   { icon: <Mail size={14} />, text: 'edgardosamame@gmail.com', href: 'mailto:edgardosamame@gmail.com' },
                   { icon: <Phone size={14} />, text: '+51 936 430 407', href: undefined },
                   { icon: <MapPin size={14} />, text: 'La Molina, Lima, Perú', href: undefined },
                 ].map(({ icon, text, href }) =>
                   href ? (
-                    <a key={text} href={href} className={`flex items-center gap-3 p-3 rounded-lg ${cardHover}`}>
+                    <a
+                      key={text}
+                      href={href}
+                      target={href.startsWith('https') ? '_blank' : undefined}
+                      rel="noopener noreferrer"
+                      className={`flex items-center gap-3 p-3 rounded-lg ${cardHover}`}
+                    >
                       <span className="text-slate-500">{icon}</span>
                       <span className="text-sm text-slate-400">{text}</span>
                     </a>
@@ -463,10 +608,12 @@ const App: React.FC = () => {
               </div>
 
               <a
-                href="mailto:edgardosamame@gmail.com"
-                className="flex items-center justify-center gap-2 py-3 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-sm font-semibold transition-colors"
+                href="https://wa.me/51XXXXXXXXX?text=Hola%20Edgardo%2C%20me%20interesa%20conversar%20sobre%20un%20proyecto."
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-center gap-2 py-3 rounded-lg bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-sm font-semibold transition-all"
               >
-                <Mail size={15} /> Enviar mensaje
+                <MessageCircle size={15} /> Enviar mensaje por WhatsApp
               </a>
 
               <div className="mt-8 pt-6 border-t border-white/5">
@@ -494,12 +641,14 @@ const App: React.FC = () => {
 
       <footer className="py-10 px-6 border-t border-white/5">
         <div className="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
-          <p className="text-slate-700 text-xs">© {new Date().getFullYear()} Edgardo Samamé</p>
+          <p className="text-slate-700 text-xs">
+            © {new Date().getFullYear()} Edgardo Samamé · Ingeniero de Software &amp; Experto en IA — Lima, Perú
+          </p>
           <div className="flex gap-3">
             <a href="https://github.com/eddy1699" target="_blank" rel="noopener noreferrer" aria-label="GitHub" className="text-slate-600 hover:text-slate-400 transition-colors">
               <Github size={18} />
             </a>
-            <a href="https://linkedin.com/in/edgardosamame" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" className="text-slate-600 hover:text-blue-400 transition-colors">
+            <a href="https://linkedin.com/in/edgardosamame" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" className="text-slate-600 hover:text-emerald-400 transition-colors">
               <Linkedin size={18} />
             </a>
             <a href="mailto:edgardosamame@gmail.com" aria-label="Email" className="text-slate-600 hover:text-slate-400 transition-colors">
